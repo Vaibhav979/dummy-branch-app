@@ -134,17 +134,8 @@ Meaning the production deployment always gets the newest stable image.
 
 ### 🚀 CI/CD Pipeline (GitHub Actions)
 
-+--------------------------------------------------------------+
-| GitHub Actions |
-+--------------------------------------------------------------+
-| 1. Checkout code |
-| 2. Set up Python (3.11) |
-| 3. Install dependencies |
-| 4. Run tests (pytest) |
-| 5. Build Docker image |
-| 6. Security scan with Trivy |
-| 7. Push verified image to GHCR (main branch only) |
-+--------------------------------------------------------------+
+├── Build → Test → Scan → Publish Image → GHCR
+└── Images deployed via docker-compose (.env)
 
 The resulting image is stored at:
 
