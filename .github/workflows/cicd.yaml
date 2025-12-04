@@ -30,11 +30,13 @@ jobs:
         run: |
           pytest || echo "No tests found"
 
+      # Set IMAGE_NAME env variable in lowercase
+      - name: Set Docker image name (lowercase)
+        run: echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner,, }}/branch-loan-api" >> $GITHUB_ENV
+
       # Build Docker image
       - name: Build Docker Image
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/branch-loan-api
-          docker build -t $IMAGE_NAME:${{ github.sha }} .
+        run: docker build -t $IMAGE_NAME:${{ github.sha }} .
 
       # Install Trivy scanner
       - name: Install Trivy
@@ -45,9 +47,7 @@ jobs:
 
       # Scan Docker image for vulnerabilities
       - name: Trivy Image Scan
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/branch-loan-api
-          trivy image --exit-code 0 --severity HIGH,CRITICAL $IMAGE_NAME:${{ github.sha }}
+        run: trivy image --exit-code 0 --severity HIGH,CRITICAL $IMAGE_NAME:${{ github.sha }}
 
   push-image:
     name: Push Image to GHCR
@@ -59,23 +59,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set Docker image name (lowercase)
+        run: echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner,, }}/branch-loan-api" >> $GITHUB_ENV
+
       # Authenticate to GHCR
       - name: Log in to GHCR
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build Docker Image (again for pushing)
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/branch-loan-api
-          docker build -t $IMAGE_NAME:${{ github.sha }} .
+      # Build Docker Image (for pushing)
+      - name: Build Docker Image
+        run: docker build -t $IMAGE_NAME:${{ github.sha }} .
 
       - name: Tag Image as Latest
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/branch-loan-api
-          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
+        run: docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
 
       - name: Push Images
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/branch-loan-api
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
