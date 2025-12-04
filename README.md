@@ -134,20 +134,21 @@ Meaning the production deployment always gets the newest stable image.
 
 ### 🚀 CI/CD Pipeline (GitHub Actions)
 
-┌──────────────────────────────────────────────────────────┐
-│ GitHub Actions │
-├──────────────────────────────────────────────────────────┤
-1️⃣ Checkout code
-2️⃣ Set up Python (3.11)
-3️⃣ Install dependencies
-4️⃣ Run tests (pytest)
-5️⃣ Build Docker image
-6️⃣ Security scan (Trivy)
-7️⃣ Push verified image → GHCR (only on main branch)
++--------------------------------------------------------------+
+| GitHub Actions |
++--------------------------------------------------------------+
+| 1. Checkout code |
+| 2. Set up Python (3.11) |
+| 3. Install dependencies |
+| 4. Run tests (pytest) |
+| 5. Build Docker image |
+| 6. Security scan with Trivy |
+| 7. Push verified image to GHCR (main branch only) |
++--------------------------------------------------------------+
 
-Deployment:
+The resulting image is stored at:
 
-Local environments pull images from GHCR using:
+ghcr.io/<github-username>/branch-loan-api:latest
 
 ---
 
